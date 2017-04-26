@@ -1,5 +1,5 @@
 <?php
-helper::import('D:\chandao\module\testcase\model.php');
+helper::import('D:\github\my_zentao\module\testcase\model.php');
 class exttestcaseModel extends testcaseModel 
 {
 /**

@@ -1,5 +1,5 @@
 <?php
-helper::import('D:\chandao\module\file\model.php');
+helper::import('D:\github\my_zentao\module\file\model.php');
 class extfileModel extends fileModel 
 {
 public function excludeHtml($content, $extra = '')

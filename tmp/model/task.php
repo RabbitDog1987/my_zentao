@@ -1,5 +1,5 @@
 <?php
-helper::import('D:\chandao\module\task\model.php');
+helper::import('D:\github\my_zentao\module\task\model.php');
 class exttaskModel extends taskModel 
 {
 /**

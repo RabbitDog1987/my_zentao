@@ -38,6 +38,11 @@ class githubModel extends model
 		return $json_r;
 	}
 
+	public function saveToken($token)
+	{
+		$this->dao->update(TABLE_USER)->set('token')->eq($token)->where('account')->eq($this->session->user->account)->exec();
+	}
+
 	/**
 	//使用refresh token获取新的access token，GitHub暂时不支持
 	public function access_token_refresh($refresh_token){
@@ -124,12 +129,19 @@ class githubModel extends model
 		//$headers[]='User-Agent: GitHub.PHP(zhaogang999.com)';
 		//$headers[]='{'.'"Authorization":  token '.$this->session->github_t.'}';
 		curl_setopt($ci, CURLOPT_HTTPHEADER, array(
-                 'Authorization: token '. $this->session->github_t,
+                 'Authorization: token '. $this->session->user->token,
             ));
 		//curl_setopt($ci, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ci, CURLOPT_URL, $url);
 		$response=curl_exec($ci);
 		curl_close($ci);
 		return $response;
+	}
+
+	public function linkBug($issue)
+	{
+		$githubID = $issue->issue->number;
+		$bugID = $isseu->issue->title;
+		$this->dao->update(TABLE_BUG)->SET('github')->eq($githubID)->where('title')->eq($bugID)->limit(1)->exec();
 	}
 }
