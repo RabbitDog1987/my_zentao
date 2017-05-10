@@ -38,7 +38,26 @@ class myBug extends bug
             die(js::locate($this->createLink('bug', 'view', "bugID=$bugID"), 'parent'));
         }
 
-        $bug        = $this->bug->getById($bugID);
+
+        $bug = $this->bug->getById($bugID);
+        $this->loadModel('github');
+
+        if ($bug->github != 0)
+        {
+            if($this->session->user->token==='')
+            {
+                //生成登录链接
+                $login_url=$this->github->login_url($this->config->github->callback_url,'user,repo,public_repo,repo_deployment,repo:status,delete_repo,admin:repo_hook');
+                //echo '<a href="'.$login_url.'">点击进入授权页面</a>';
+                die(js::locate($login_url, 'parent'));
+                //die(js::confirm(sprintf($this->lang->bug->remindTask, $bug->toTask), $confirmURL, $cancelURL, 'parent', 'parent.parent'));
+                //die('<a href="'.$login_url.'">点击进入授权页面</a>');
+                //https://github.com/login/oauth/
+            }
+            //$this->loadModel('github');
+            //$this->github->resolve($oldBug, $bug, 'bug');
+        } 
+     
         $productID  = $bug->product;
         $users      = $this->user->getPairs('nodeleted');
         $assignedTo = $bug->openedBy;

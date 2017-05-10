@@ -106,8 +106,8 @@ class githubModel extends model
 			//$result_str=$this->http($url, http_build_query($params), 'POST');
 			$result_str=$this->http($url, json_encode($params), 'POST');
 		}
-		$result=array();
-		if($result_str!='') $result=json_decode($result_str, true);
+		$result = new stdClass();
+		if($result_str!='') $result=json_decode($result_str);
 		return $result;
 	}
 
@@ -143,5 +143,61 @@ class githubModel extends model
 		$githubID = $issue->issue->number;
 		$bugID = $isseu->issue->title;
 		$this->dao->update(TABLE_BUG)->SET('github')->eq($githubID)->where('title')->eq($bugID)->limit(1)->exec();
+	}
+
+	public function edit($old, $bug, $type)
+	{
+		$ip = 'http://' . $_SERVER['HTTP_HOST'];//或https
+		$upliadPath = 'data/upload/1/';
+		$bug->steps = str_replace($upliadPath, $ip . '/' . $upliadPath, $bug->steps);
+		//var_dump($this->session->user->account);die;
+		$issueID = $old->github;
+		
+		$state = $bug->status=='active'?'open':'closed';
+		
+		$data = array(
+			'title'=>$bug->title,
+			'body'=>$bug->steps,
+			'assignee'=>"zhaogang999",
+			'state' => $state,
+			'labels'=>["bug"],
+		);
+		//$data = array();
+		$result = $this->api('repos/zhaogang999/shop/issues/'. $issueID, $data, 'POST');
+		//var_dump($result);die;
+	}
+
+	public function resolve($old, $bug, $type)
+	{
+		$ip = 'http://' . $_SERVER['HTTP_HOST'];//或https
+		$upliadPath = 'data/upload/1/';
+		$bug->steps = str_replace($upliadPath, $ip . '/' . $upliadPath, $bug->steps);
+		//var_dump($this->session->user->account);die;
+		$issueID = $old->github;
+		
+		$state = $bug->status=='active'?'open':'closed';
+		
+		$data = array(
+			'state' => $state,
+		);
+		//$data = array();
+		$result = $this->api('repos/zhaogang999/shop/issues/'. $issueID, $data, 'POST');
+		//var_dump($result);die;
+	}
+
+
+	public function comments($issueID, $bug, $type)
+	{
+		$ip = 'http://' . $_SERVER['HTTP_HOST'];//或https
+		$upliadPath = 'data/upload/1/';
+		$bug->resolution = str_replace($upliadPath, $ip . '/' . $upliadPath, $bug->resolution);
+		//var_dump($this->session->user->account);die;
+		
+		$data = array(
+			'body'=>$bug->resolution,
+		);
+		//$data = array();
+		$result = $this->api('repos/zhaogang999/shop/issues/'. $issueID .'/comments', $data, 'POST');
+		//var_dump($result);die;
 	}
 }

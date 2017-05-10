@@ -1,5 +1,8 @@
-<?php  
-    /**
+<?php
+helper::import('D:\github\my_zentao\module\common\model.php');
+class extcommonModel extends commonModel 
+{
+/**
      * Check the user has permission to access this method, if not, locate to the login page or deny page.
      * 
      * @access public
@@ -10,30 +13,34 @@
         $module = $this->app->getModuleName();
         $method = $this->app->getMethodName();
 
-        if (isset($_SERVER['HTTP_X_HUB_SIGNATURE'])) 
+
+        $signature = $_SERVER['HTTP_X_HUB_SIGNATURE'] ;
+        $secret = "123456";
+        $account = 'admin';
+
+        if ($signature) 
         {
-            $secret = "123456";
-            $account = 'admin';
-        
+            
             $hash = "sha1=" . hash_hmac('sha1', file_get_contents('php://input'), $secret);
             //$sss = strcmp($signature, $hash);
             //echo $sss;die;
-            if (strcmp($_SERVER['HTTP_X_HUB_SIGNATURE'], $hash) == 0) 
+            if (strcmp($signature, $hash) == 0) 
             {
                 //echo "dddddd";
-                /*$user = $this->dao->select('*')->from(TABLE_USER)
+                $user = $this->dao->select('*')->from(TABLE_USER)
                     ->where('account')->eq($account)
                     ->andWhere('deleted')->eq(0)
                     ->fetch();
-                var_dump($user);die;*/
+                //echo $user;
                 $this->loadModel('user');
                 $user->rights = $this->user->authorize($account);
                 //var_dump($user->rights);die;
                 $user->groups = $this->user->getGroups($account);
                 $this->app->user = $user;
-                return true;
+                //return true;
             }
         }
+
         if(isset($this->app->user->modifyPassword) and $this->app->user->modifyPassword and $module != 'my' and $method != 'changepassword') die(js::locate(helper::createLink('my', 'changepassword')));
         if($this->isOpenMethod($module, $method)) return true;
         if(!$this->loadModel('user')->isLogon() and $this->server->php_auth_user) $this->user->identifyByPhpAuth();
@@ -49,3 +56,5 @@
             die(js::locate(helper::createLink('user', 'login', "referer=$referer")));
         }
     }
+//**//
+}

@@ -30,7 +30,9 @@
     {
         ob_start();
         echo "<div class='btn-group'>";
-        common::printIcon('github', 'sync', $params, $bug, 'button', '', '', '', false);
+        //增加sync按钮
+        common::printIcon('github', 'sync', $params, $bug, 'button', 'github icon-2x', '', 'iframe', false);
+      
         common::printIcon('bug', 'confirmBug', $params, $bug, 'button', 'search', '', 'iframe', true);
         common::printIcon('bug', 'assignTo',   $params, '',   'button', '', '', 'iframe', true);
         common::printIcon('bug', 'resolve',    $params, $bug, 'button', '', '', 'iframe showinonlybody', true);
