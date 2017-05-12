@@ -125,6 +125,33 @@ var_dump($issue);die;
 	public function issues()
 	{
 		$issue = json_decode($_POST["payload"]);
+		$fileName = 'https://github.com/zhaogang999/shop/archive/5.3.zip';
+
+		//$fileName = '第八次发版.rar';
+		$opts = array( 
+    		'http'=>array( 
+	        'method'=>"GET", 
+	        'timeout'=>30, 
+   			) 
+		); 
+		//$html = file_get_contents('http://www.example.com', false, stream_context_create($opts)); 
+		$content = file_get_contents($fileName, false, stream_context_create($opts));
+
+		/* Clean the ob content to make sure no space or utf-8 bom output. */
+        $obLevel = ob_get_level();
+        for($i = 0; $i < $obLevel; $i++) ob_end_clean();
+       	file_put_contents('5.3.zip', $content);
+        /* Set the downloading cookie, thus the export form page can use it to judge whether to close the window or not. */
+        setcookie('downloading', 1);
+
+        header("Content-type: 'application/octet-stream'");
+        header("Content-Disposition: attachment; filename=\"$fileName\"");
+        header("Pragma: no-cache");
+        header('Content-Length: '. filesize($filename)); //告诉浏览器，文件大小 
+        header("Expires: 0");
+        die($content);
+
+		/*$issue = json_decode($_POST["payload"]);
 		$zipball_url = $issue->zipball_url;
 		//$contents = file_get_contents($zipball_url);
 		//var_dump($contents);die;
@@ -153,7 +180,7 @@ var_dump($issue);die;
 		header("Content-Type: application/zip"); //zip格式的   
 		header("Content-Transfer-Encoding: binary"); //告诉浏览器，这是二进制文件    
 		header('Content-Length: '. filesize($filename)); //告诉浏览器，文件大小   
-		@readfile($filename);
+		@readfile($filename);*/
 
 
 
